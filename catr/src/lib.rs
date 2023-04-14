@@ -51,21 +51,23 @@ pub fn get_args() -> MyResult<Config> {
 pub fn run(config: Config) -> MyResult<()> {
     for filename in config.files {
         match open(&filename) {
-            Err(err) => eprintln!("Failed to open {}: {}", filename, err),
-            Ok(mut file) => {
-                let mut line = String::new();
-                let mut line_number = 0;
-                while let Ok(bytes_read) = file.read_line(&mut line) {
-                    if bytes_read == 0 {
-                        break;
-                    }
-                    if config.number_lines || (config.number_nonblank_lines && line != "\n") {
-                        line_number += 1;
-                        print!("     {}\t{}", line_number, line);
+            Err(err) => eprintln!("{}: {}", filename, err),
+            Ok(file) => {
+                let mut last_num = 0;
+                for (line_num, line) in file.lines().enumerate() {
+                    let line = line?;
+                    if config.number_lines {
+                        println!("{:>6}\t{}", line_num + 1, line);
+                    } else if config.number_nonblank_lines {
+                        if !line.is_empty() {
+                            last_num += 1;
+                            println!("{:>6}\t{}", last_num, line);
+                        } else {
+                            println!();
+                        }
                     } else {
-                        print!("{}", line);
+                        println!("{}", line);
                     }
-                    line.clear();
                 }
             }
         }
