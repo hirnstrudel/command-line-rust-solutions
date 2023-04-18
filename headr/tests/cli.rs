@@ -102,7 +102,7 @@ fn run(args: &[&str], expected_file: &str) -> TestResult {
         .args(args)
         .assert()
         .success()
-        .stdout(predicate::eq(&expected.as_bytes() as &[u8]));
+        .stdout(predicate::eq(expected.as_bytes() as &[u8]));
 
     Ok(())
 }
@@ -120,7 +120,7 @@ fn run_stdin(args: &[&str], input_file: &str, expected_file: &str) -> TestResult
         .write_stdin(input)
         .args(args)
         .assert()
-        .stdout(predicate::eq(&expected.as_bytes() as &[u8]));
+        .stdout(predicate::eq(expected.as_bytes() as &[u8]));
 
     Ok(())
 }
